@@ -1,5 +1,5 @@
 # this class will contain the widget used to configure the
-# alarm  image, message and display time
+# alarm  image, message and display times
 from gi.repository import Adw, Gtk, GObject
 import os
 import shutil
