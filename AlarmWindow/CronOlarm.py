@@ -14,7 +14,7 @@ parser.add_argument('--displaytime', '-t', type=int, default=10, help='Seconds t
 args = parser.parse_args()
 
 script_dir = os.path.dirname(__file__)
-image_path = script_dir+"/ImgLib/"+args.image
+image_path = script_dir+'/ImgLib/'+args.image
 message = args.message
 display_time = args.displaytime
 
