@@ -2,29 +2,62 @@ from crontab import CronTab
 import getpass
 import os
 
+class CronIO:
+    def __init__(self, user):
+        if user is None:
+            user = getpass.getuser()
+        self.cron = user
+        self.cron = CronTab(user=self.cron)
 
-# Crontab time format * * * * * # minute hour day_of_month month day_of_week
-#
-#1. * minutes 0-59
-#2. * hours 0 to 23
-#3. * day_of_month 1 to 31
-#4. * month 1 to 12
-#5. * day_of_week 0 to 6 (Sunday to Saturday, 7 is also Sunday on some systems)
+    # cron alarm is creates a GUI alarm.
+    def new_cron_alarm(self, freq, img, msg, display_time):
+        cron = self.cron
+        dirname = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'AlarmWindow'))
+        job = cron.new(command=f'python3 {dirname}/CronOlarm.py --image {img} --message "{msg}" --displaytime {display_time}')
+        job.hour.on(freq[1])    # 0-23
+        job.minute.on(freq[0])  # 0-59
+        job.dow.on(freq[4])
+        cron.write()
+        return 0
+
+    # add user defined cron job (no-GUI)
+    def add_cron_job(self, job_command, freq):
+        cron = self.cron
+        job = cron.new(command=job_command)
+        job.hour.on(freq[1])    # 0-23
+        job.minute.on(freq[0])  # 0-59
+        job.dow.on(freq[4])  # e.g. "SAT", "SUN", etc.
+
+        cron.write()
+        return 0
+    
+
+    def remove_cron_job(self, job_command, freq):
+        cron = self.cron
+        # find the job by command and remove it
+        for job in cron:
+            if job.command == job_command and job.hour ==job_command:
+                cron.remove(job)
+                cron.write()
+                return 0
+        return -1
+
+
+    # basic getter for cron jobs, returns strings of the jobs
+    def get_cron_jobs(self):
+        cron = self.cron
+        cronlist = []
+        for job in cron:
+            cronlist.append(str(job))
+        return cronlist
 
 
 
-def new_cron_job(freq, img, msg, display_time):
-    cron = CronTab(user=getpass.getuser())  # may need OOP cronIO class to tidy code
-    dirname=os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..','..', 'AlarmWindow'))
-    job = cron.new(command='python3 '+dirname+'/CronOlarm.py  --image '+img+' --message '+msg+' --displaytime '+display_time)
-    job.hour.on(freq[1])  # 0-23
-    job.minute.on(freq[0])  # 0-59
-    if freq[4]=="weekdays": # this will need further development to allow for more options
-        job.dow.on("MON","TUE","WED","THU","FRI")  # 0-6 for Sunday to Saturday
-    cron.write()
 
-    return 0
-
-# to be removed
-# if __name__ == "__main__":  # basic function tesitng 
-#     new_cron_job([10,14,'*','*',"weekdays"], 'coffee.png', '\"This is a test message\"', '10')
+## function testing 
+# if __name__ == "__main__":
+#     cron=CronIO(user=getpass.getuser())
+#     cron.new_cron_alarm(freq=(00, 11, 0, 0, ["MON", "TUE", "WED", "THU", "FRI"]), img="alarm.png", msg="Test Alarm", display_time=10)
+#     jobs = cron.get_cron_jobs()
+#     for job in jobs:
+#         print(job)

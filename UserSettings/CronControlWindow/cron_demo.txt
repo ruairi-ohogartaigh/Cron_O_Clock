@@ -1,0 +1,3 @@
+10 14 * * MON,TUE,WED,THU,FRI python3 /home/ruairi/Cron_O_Clock/Cron_O_Clock/AlarmWindow/CronOlarm.py  --image coffee.png --message "This is a test message" --displaytime 10
+
+0 11 * * * python3 /home/ruairi/Cron_O_Clock/Cron_O_Clock/AlarmWindow/CronOlarm.py --image alarm.png --message "Test Alarm" --displaytime 10
