@@ -11,9 +11,18 @@ class CronLog(Gtk.Box):
         self.set_hexpand(True)
         self.set_vexpand(True)
 
+        # Title label for the log
+        title_label = Gtk.Label(label=" Crontab Schedule:", xalign=0)
+        title_label.set_margin_bottom(6)
+        title_label.set_css_classes([" Content of Crontab:"])
+        title_label.set_markup('<span size="large" weight="bold"> Content of Crontab: </span>')
+        self.append(title_label)
+
         # Scrolled window for log
         self.scrolled = Gtk.ScrolledWindow()
         self.scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self.scrolled.set_min_content_height(200)
+        self.scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         self.scrolled.set_hexpand(True)
         self.scrolled.set_vexpand(True)
         self.append(self.scrolled)
@@ -22,8 +31,43 @@ class CronLog(Gtk.Box):
         self.log_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
         self.scrolled.set_child(self.log_box)
 
-        # Dummy info for mocking
-        self.cron_log = Gio.File.new_for_path("cron_demo.txt")
+        # Dummy info for mocking crontab -l
+        self.cron_log = Gio.File.new_for_path("Cron_O_Clock/UserSettings/CronControlWindow/cron_demo.txt")
+        self.load_log(self.cron_log)
+    
+    def load_log(self, gio_file):
+        try:
+            stream = gio_file.read(None)
+            data = stream.read_bytes(4096, None)
+            text = data.get_data().decode("utf-8")
+            for line in text.splitlines():
+                label = Gtk.Label(label=line, xalign=0)
+                label.set_css_classes(["cron-log-line"])
+                self.log_box.append(label)
+        except Exception as e:
+            label = Gtk.Label(label=f"Error loading log: {e}", xalign=0)
+            label.set_css_classes(["cron-log-line"])
+            self.log_box.append(label)
+
+        # Apply CSS for background and text color
+        css = b"""
+        .cron-log-line {
+            color: #00FF00;
+            background: transparent;
+        }
+        .cron-log-bg {
+            background: #000000;
+        }
+        """
+        style_provider = Gtk.CssProvider()
+        style_provider.load_from_data(css)
+        Gtk.StyleContext.add_provider_for_display(
+            self.get_display(),
+            style_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+        self.log_box.set_css_classes(["cron-log-bg"])
+        self.scrolled.set_css_classes(["cron-log-bg"])
 
 # scroll needs to be fixed for this gui
 

@@ -69,21 +69,26 @@ class ControlPanel(Gtk.Box):
         months_box.set_active(0)
         self.month_combo = months_box
 
+        PanelTitle = Gtk.Label(label=" Configure Cron Job time and frequency: ")
+        PanelTitle.set_halign(Gtk.Align.CENTER)
+        PanelTitle.set_markup('<span size="large" weight="bold"> Configure Cron Job time and frequency: </span>')
+
+        grid.attach(PanelTitle, 0, 0, 1, 1)
         # hours and minutes selectors
-        grid.attach(time_label, 0, 0, 1, 1)
-        grid.attach(self.hour_spin, 1, 0, 1, 1)
-        grid.attach(self.minute_spin, 2, 0, 1, 1)
+        grid.attach(time_label, 0, 1, 1, 1)
+        grid.attach(self.hour_spin, 1, 1, 1, 1)
+        grid.attach(self.minute_spin, 2, 1, 1, 1)
         
         # day and month selectors
-        grid.attach(quick_day, 0, 1, 1, 1)
-        grid.attach(quick_box, 1, 1, 2, 1)
-        grid.attach(day_label, 0, 2, 1, 1)
-        grid.attach(days_box, 1, 2, 2, 1)
-        grid.attach(month_label, 0, 3, 1, 1)
-        grid.attach(months_box, 1, 3, 2, 1)
+        grid.attach(quick_day, 0, 2, 1, 1)
+        grid.attach(quick_box, 1, 2, 2, 1)
+        grid.attach(day_label, 0, 3, 1, 1)
+        grid.attach(days_box, 1, 3, 2, 1)
+        grid.attach(month_label, 0, 4, 1, 1)
+        grid.attach(months_box, 1, 4, 2, 1)
 
         # Feedback to user
-        feedback_label = Gtk.Label(label="Your Configuration:")
+        feedback_label = Gtk.Label(label="Current Configuration:")
         # Use Gtk.Entry widgets for feedback so they can be updated easily
         time_fb = Gtk.Label()
         time_fb.set_text("cron will be called at: "+str(self.get_selected_time()))
@@ -95,7 +100,7 @@ class ControlPanel(Gtk.Box):
         months_fb.set_text(" These Months: "+str(self.get_selected_months()))
         #months_fb.set_editable(False)
         months_fb = Gtk.Label(label=str(self.get_selected_months()))
-        grid.attach(feedback_label, 0, 4, 1, 1)
+
 
         # Store feedback labels for later updates
         self.time_fb = time_fb
@@ -111,9 +116,10 @@ class ControlPanel(Gtk.Box):
 
         # Initial feedback update
         self.update_feedback()
-        grid.attach(time_fb, 1, 4, 1, 1)
-        grid.attach(days_fb, 2, 4, 1, 1)
-        grid.attach(months_fb, 3, 4, 1, 1)
+        grid.attach(feedback_label, 0, 5, 1, 1)
+        grid.attach(time_fb, 1, 5, 1, 1)
+        grid.attach(days_fb, 2, 5, 1, 1)
+        grid.attach(months_fb, 3, 5, 1, 1)
 
 
 
@@ -179,6 +185,7 @@ class ControlPanel(Gtk.Box):
             for btn in self.day_toggles:
                 if btn.get_label() in ["Mon", "Tue", "Wed", "Thu", "Fri"]:
                     btn.set_active(False)
+                    print("Weekdays toggled off "+ btn.get_label())
     def on_weekend_toggled(self, button):
         if button.get_active():
             for btn in self.day_toggles:
@@ -199,13 +206,13 @@ class ControlPanel(Gtk.Box):
 
 
 
-if __name__ == "__main__":
-    app = Gtk.Application()
-    def on_activate(app):
-        win = Gtk.ApplicationWindow(application=app)
-        win.set_default_size(600, 400)
-        panel = ControlPanel()
-        win.set_child(panel)
-        win.present()
-    app.connect("activate", on_activate)
-    app.run()
+# if __name__ == "__main__":
+#     app = Gtk.Application()
+#     def on_activate(app):
+#         win = Gtk.ApplicationWindow(application=app)
+#         win.set_default_size(600, 400)
+#         panel = ControlPanel()
+#         win.set_child(panel)
+#         win.present()
+#     app.connect("activate", on_activate)
+#     app.run()
