@@ -2,13 +2,13 @@ from crontab import CronTab
 import getpass
 import os
 
-class CronIO:
-    def __init__(self, user):
+class CronIO():
+    def __init__(self, parent, user=None):
         if user is None:
             user = getpass.getuser()
         self.cron = user
         self.cron = CronTab(user=self.cron)
-
+        self.parent = parent
     # cron alarm is creates a GUI alarm.
     def new_cron_alarm(self, freq, img, msg, display_time):
         cron = self.cron

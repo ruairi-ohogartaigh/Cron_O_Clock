@@ -6,10 +6,12 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk, Gio, GObject
 
 class CronLog(Gtk.Box):
-    def __init__(self):
+
+    def __init__(self, parent):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.set_hexpand(True)
         self.set_vexpand(True)
+        self.parent = parent
 
         # Title label for the log
         title_label = Gtk.Label(label=" Crontab Schedule:", xalign=0)
@@ -32,7 +34,7 @@ class CronLog(Gtk.Box):
         self.scrolled.set_child(self.log_box)
 
         # Dummy info for mocking crontab -l
-        self.cron_log = Gio.File.new_for_path("Cron_O_Clock/UserSettings/CronControlWindow/cron_demo.txt")
+        self.cron_log = Gio.File.new_for_path("Cron_O_Clock/UserSettings/CronControlWindows/cron_demo.txt")
         self.load_log(self.cron_log)
     
     def load_log(self, gio_file):

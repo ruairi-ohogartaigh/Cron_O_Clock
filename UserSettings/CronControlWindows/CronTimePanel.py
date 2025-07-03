@@ -2,16 +2,15 @@
 
 import gi
 import datetime
-gi.require_version('Adw', '1')
 gi.require_version('Gtk', '4.0')
 
-from gi.repository import Adw, Gio, GObject, Gtk
+from gi.repository import Gtk
+from CronControlWindows import ApplyNewTask
 
-
-class ControlPanel(Gtk.Box):
-    def __init__(self):
+class CronTimePanel(Gtk.Box):
+    def __init__(self, parent):
         super().__init__()#title="Cron Control Panel")
-
+        self.parent = parent
         grid = Gtk.Grid(column_spacing=10, row_spacing=10)
         self.append(grid)
 
@@ -32,21 +31,21 @@ class ControlPanel(Gtk.Box):
         self.minute_spin.set_increments(1, 1)
 
         # Quick day selector
-        quick_day = Gtk.Label(label="Quick Select:")
-        quick_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
-        self.quick_day_toggles = []
-        quick_names = ["Week-days", "Weekend", "Everyday"]
-        for typ in quick_names:
-            btn = Gtk.ToggleButton(label=typ)
-            if typ == "Week-days":
-                btn.connect("toggled", self.on_weekdays_toggled)
-            elif typ == "Weekend":
-                btn.connect("toggled", self.on_weekend_toggled)
-            elif typ == "Everyday":
-                btn.connect("toggled", self.on_everyday_toggled)
-            btn.connect("toggled", lambda b: print(f"Quick selection: {b.get_label()}"))
-            quick_box.append(btn)
-            self.quick_day_toggles.append(btn)
+        #quick_day = Gtk.Label(label="Quick Select:")
+        # quick_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
+        # self.quick_day_toggles = []
+        # quick_names = ["Week-days", "Weekend", "Everyday"]
+        # for typ in quick_names:
+        #     btn = Gtk.ToggleButton(label=typ)
+        #     if typ == "Week-days":
+        #         btn.connect("toggled", self.on_weekdays_toggled)
+        #     elif typ == "Weekend":
+        #         btn.connect("toggled", self.on_weekend_toggled)
+        #     elif typ == "Everyday":
+        #         btn.connect("toggled", self.on_everyday_toggled)
+        #     btn.connect("toggled", lambda b: print(f"Quick selection: {b.get_label()}"))
+        #     quick_box.append(btn)
+        #     self.quick_day_toggles.append(btn)
 
         # Days of week selector (toggle buttons)
         day_label = Gtk.Label(label="Days of Week:")
@@ -80,8 +79,8 @@ class ControlPanel(Gtk.Box):
         grid.attach(self.minute_spin, 2, 1, 1, 1)
         
         # day and month selectors
-        grid.attach(quick_day, 0, 2, 1, 1)
-        grid.attach(quick_box, 1, 2, 2, 1)
+        # grid.attach(quick_day, 0, 2, 1, 1)
+        # grid.attach(quick_box, 1, 2, 2, 1)
         grid.attach(day_label, 0, 3, 1, 1)
         grid.attach(days_box, 1, 3, 2, 1)
         grid.attach(month_label, 0, 4, 1, 1)
@@ -107,6 +106,7 @@ class ControlPanel(Gtk.Box):
         self.days_fb = days_fb
         self.months_fb = months_fb
 
+        #self.ApplyNewTask = ApplyNewTask.ApplyNewTask
         # Connect signals to update feedback labels
         self.hour_spin.connect("value-changed", lambda w: self.update_feedback())
         self.minute_spin.connect("value-changed", lambda w: self.update_feedback())
@@ -121,7 +121,8 @@ class ControlPanel(Gtk.Box):
         grid.attach(days_fb, 2, 5, 1, 1)
         grid.attach(months_fb, 3, 5, 1, 1)
 
-
+    def get_time_value(self):
+        return self.get_selected_time(), self.get_selected_days(), self.get_selected_months()
 
     def get_selected_time(self):
             hour = int(self.hour_spin.get_value())
@@ -155,6 +156,12 @@ class ControlPanel(Gtk.Box):
         self.time_fb.set_text("cron will be called at: "+self.get_selected_time())
         self.days_fb.set_text(" these days: "+str(self.get_selected_days()))
         self.months_fb.set_text(" during "+str(self.get_selected_months()))
+        #self.ApplyNewTask=self.parent.ApplyNewTas#.update_feedback()  # Update feedback in ApplyNewTask panel
+
+
+
+        # if self.parent.ApplyNewTask is not None:
+        #     self.parent.ApplyNewTask.update_feedback()
 
     ## action handlers for time buttons
     def on_hour_spin_selected(self, spin_button):
@@ -175,44 +182,33 @@ class ControlPanel(Gtk.Box):
             self.setMin = minute
 
 
-    # Quick select days 
-    def on_weekdays_toggled(self, button):
-        if button.get_active():
-            for btn in self.day_toggles:
-                if btn.get_label() in ["Mon", "Tue", "Wed", "Thu", "Fri"]:
-                    btn.set_active(True)
-        else:
-            for btn in self.day_toggles:
-                if btn.get_label() in ["Mon", "Tue", "Wed", "Thu", "Fri"]:
-                    btn.set_active(False)
-                    print("Weekdays toggled off "+ btn.get_label())
-    def on_weekend_toggled(self, button):
-        if button.get_active():
-            for btn in self.day_toggles:
-                if btn.get_label() in ["Sat", "Sun"]:
-                    btn.set_active(True)
-        else:
-            for btn in self.day_toggles:
-                if btn.get_label() in ["Sat", "Sun"]:
-                    btn.set_active(False)
+    # # Quick select days 
+    # def on_weekdays_toggled(self, button):
+    #     if button.get_active():
+    #         for btn in self.day_toggles:
+    #             if btn.get_label() in ["Mon", "Tue", "Wed", "Thu", "Fri"]:
+    #                 btn.set_active(True)
+    #     else:
+    #         for btn in self.day_toggles:
+    #             if btn.get_label() in ["Mon", "Tue", "Wed", "Thu", "Fri"]:
+    #                 btn.set_active(False)
+    #                 print("Weekdays toggled off "+ btn.get_label())
+    # def on_weekend_toggled(self, button):
+    #     if button.get_active():
+    #         for btn in self.day_toggles:
+    #             if btn.get_label() in ["Sat", "Sun"]:
+    #                 btn.set_active(True)
+    #     else:
+    #         for btn in self.day_toggles:
+    #             if btn.get_label() in ["Sat", "Sun"]:
+    #                 btn.set_active(False)
 
-    def on_everyday_toggled(self, button):
-        if button.get_active():
-            for btn in self.day_toggles:
-                btn.set_active(True)
-        else:
-            for btn in self.day_toggles:
-                btn.set_active(False)
+    # def on_everyday_toggled(self, button):
+    #     if button.get_active():
+    #         for btn in self.day_toggles:
+    #             btn.set_active(True)
+    #     else:
+    #         for btn in self.day_toggles:
+    #             btn.set_active(False)
 
 
-
-# if __name__ == "__main__":
-#     app = Gtk.Application()
-#     def on_activate(app):
-#         win = Gtk.ApplicationWindow(application=app)
-#         win.set_default_size(600, 400)
-#         panel = ControlPanel()
-#         win.set_child(panel)
-#         win.present()
-#     app.connect("activate", on_activate)
-#     app.run()

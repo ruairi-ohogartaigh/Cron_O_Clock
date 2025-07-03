@@ -2,13 +2,16 @@
 # it will initialise the gui and backend with the CronController
 
 import gi
-
-#from Cron_O_Clock.UserSettings.CronControlWindow import CronAlrmCfg
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gtk, Adw
+from gi.repository import Gtk, GObject
+import datetime
+import sys_state
 
-
-from CronControlWindow import CronLog,  CronTimePanel,  ApplyNewTask, CronTaskPanel
+#from CronControlWindows import CronLog,  CronActionFrames
+from CronControlWindows import CronTimePanel, ApplyNewTask, CronTaskPanel, CronLog
+from CronControlWindows import CronActionFrames
+#CronActionFrames
+from CronController import CronIO
 
 
 
@@ -18,20 +21,14 @@ if __name__ == "__main__":
     def on_activate(app):
         win = Gtk.ApplicationWindow(application=app)
         win.set_title("Cron Scheduler")
-        ctrlP = CronTimePanel.ControlPanel()
-        log = CronLog.CronLog()
-        AddTask = ApplyNewTask.ApplyNewTask()
-        TskCfg=CronTaskPanel.CronTaskPanel()
+        win.set_default_size(800, 600)
 
+        #log = CronLog.CronLog()
+        action_frames = CronActionFrames.Cron_Action_Frames(win)
 
-
-        # Create a vertical box to hold all panels
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        vbox.append(ctrlP)          # cron time config
-        vbox.append(TskCfg)        # cron task configuration
-        vbox.append(AddTask)        # add/remove from crontab
-        vbox.append(log)           # cron log viewer    
-
+        vbox.append(action_frames)
+        #vbox.append(log)
 
         win.set_child(vbox)
         win.present()
