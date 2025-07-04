@@ -156,12 +156,8 @@ class CronTimePanel(Gtk.Box):
         self.time_fb.set_text("cron will be called at: "+self.get_selected_time())
         self.days_fb.set_text(" these days: "+str(self.get_selected_days()))
         self.months_fb.set_text(" during "+str(self.get_selected_months()))
-        #self.ApplyNewTask=self.parent.ApplyNewTas#.update_feedback()  # Update feedback in ApplyNewTask panel
-
-
-
-        # if self.parent.ApplyNewTask is not None:
-        #     self.parent.ApplyNewTask.update_feedback()
+        if hasattr(self.parent, "ApplyNewTask"):
+            self.parent.ApplyNewTask.update_feedback()
 
     ## action handlers for time buttons
     def on_hour_spin_selected(self, spin_button):

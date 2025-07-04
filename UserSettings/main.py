@@ -5,7 +5,6 @@ import gi
 gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk, GObject
 import datetime
-import sys_state
 
 #from CronControlWindows import CronLog,  CronActionFrames
 from CronControlWindows import CronTimePanel, ApplyNewTask, CronTaskPanel, CronLog

@@ -16,10 +16,10 @@ class CronTaskPanel(Gtk.Box):
         PanelTitle = Gtk.Label(label=" Configure Cron Task:")
         PanelTitle.set_markup('<span size="large" weight="bold"> Configure Cron Tasks: </span>')
         PanelTitle.set_halign(Gtk.Align.START)
-    
-        self.CronCmdCfg = CronCmdCfg.CronCmdCfg(self)
-        self.CronAlrmCfg = CronAlrmCfg.CronAlrmCfg(self)
-        self.CronRM_Cfg = CronRM_Cfg.CronRmCfg(self)
+        task_cmd=""
+        self.CronCmdCfg = CronCmdCfg.CronCmdCfg(self, task_cmd)
+        self.CronAlrmCfg = CronAlrmCfg.CronAlrmCfg(self, task_cmd)
+        self.CronRM_Cfg = CronRM_Cfg.CronRmCfg(self, task_cmd)
         self.HelpCfg = HelpCfg.HelpCfg(self)
             # Create a notebook for alarm and command config
 

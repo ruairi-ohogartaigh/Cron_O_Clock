@@ -12,7 +12,7 @@ import shutil
 class CronRmCfg(Gtk.Box):
 
 
-    def __init__(self, parent):
+    def __init__(self, parent, task_cmd): # task_cmd is the command to be removed
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.set_margin_top(12)
         self.set_margin_bottom(12)

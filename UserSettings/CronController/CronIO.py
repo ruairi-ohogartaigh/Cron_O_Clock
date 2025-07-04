@@ -3,7 +3,7 @@ import getpass
 import os
 
 class CronIO():
-    def __init__(self, parent, user=None):
+    def __init__(self, parent, user=None, apply_new_task=None):
         if user is None:
             user = getpass.getuser()
         self.cron = user
