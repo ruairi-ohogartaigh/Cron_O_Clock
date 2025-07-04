@@ -60,8 +60,8 @@ class CronAlrmCfg(Gtk.Box):
         self.sec_spin.set_value(0)
         self.sec_spin.set_increments(1, 1)
         # Connect value-changed signals to on_apply_clicked
-        self.min_spin.connect("minute value-changed", self.on_min_selected)
-        self.sec_spin.connect("second value-changed", self.on_sec_selected)
+        self.min_spin.connect("value-changed", self.on_min_selected)
+        self.sec_spin.connect("value-changed", self.on_sec_selected)
 
 
         # Message entry
@@ -70,7 +70,7 @@ class CronAlrmCfg(Gtk.Box):
         self.msg_entry = Gtk.Entry()
         self.msg_entry.set_placeholder_text("Enter message")
         self.msg_entry.set_hexpand(True)
-        self.msg_entry.connect("message changed", self.on_msg_selected)
+        self.msg_entry.connect("changed", self.on_msg_selected)
 
         # Add widgets to the box
         self.append(img_label)

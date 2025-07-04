@@ -8,11 +8,17 @@ from gi.repository import  Gtk
 import os
 import shutil
 
+from CronController import CronIO
+# here we will use the CronIO to check crontab for value remove the task from the crontab
 
 class CronRmCfg(Gtk.Box):
 
+    ## for functionality of this class, we want feedback from cron_io to confirm the users input is present in the crontab
+    # this will require some kind of grep command to check if the task_cmd is present in the crontab
+    # otherwise  we need to give feedback that the task_cmd is not present
 
-    def __init__(self, parent, task_cmd): # task_cmd is the command to be removed
+
+    def __init__(self, parent, cron_io, task_cmd): # task_cmd is the command to be removed
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.set_margin_top(12)
         self.set_margin_bottom(12)
@@ -31,18 +37,21 @@ class CronRmCfg(Gtk.Box):
         self.append(img_label)
         Img_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         Img_box.append(self.img_entry)
+        self.img_entry.connect("changed", self.on_command_selected)
         # Img_box.append(add_img_button)
+
+
 
         self.append(Img_box)
 
 
-# local debugging code
-# if __name__ == "__main__":
-#     app = Gtk.Application()
-#     def on_activate(app):
-#         win = Gtk.ApplicationWindow(application=app)
-#         cfg = CronCmdCfg()
-#         win.set_child(cfg)
-#         win.present()
-#     app.connect("activate", on_activate)
-#     app.run()
+    def on_command_selected(self, combo):
+        # Get the selected command
+        selected_command = combo.get_active_text()
+        if selected_command:
+            self.img_entry.set_text(selected_command)
+            # Here we would call the CronIO to remove the task from the crontab
+            # cron_io.remove_task(selected_command)
+            print(f"Command to be removed: {selected_command}")
+        else:
+            print("No command selected")

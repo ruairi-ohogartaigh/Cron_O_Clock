@@ -20,9 +20,12 @@ class Cron_Action_Frames(Gtk.Box):
         # self.ApplyNewTask = ApplyNewTask(self)
         grid = Gtk.Grid(column_spacing=10, row_spacing=10)
         self.CronTimePanel = CronTimePanel.CronTimePanel(self)
-        self.CronTaskPanel = CronTaskPanel.CronTaskPanel(self)
+        self.CronIO = CronIO.CronIO(self)
+        self.CronTaskPanel = CronTaskPanel.CronTaskPanel(self, self.CronIO)
         self.ApplyNewTask = ApplyNewTask.ApplyNewTask(self, self.CronTimePanel, self.CronTaskPanel)
-        self.CronIO = CronIO.CronIO(self.ApplyNewTask)
+
+
+
         self.CronLog = CronLog.CronLog(self,self.CronIO)
         grid.attach(self.CronTimePanel,0,1,1,1)
         grid.attach(self.CronTaskPanel, 0, 2, 1, 1)

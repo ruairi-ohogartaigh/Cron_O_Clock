@@ -34,13 +34,3 @@ class CronCmdCfg(Gtk.Box):
         self.append(Img_box)
 
 
-# local debugging code
-# if __name__ == "__main__":
-#     app = Gtk.Application()
-#     def on_activate(app):
-#         win = Gtk.ApplicationWindow(application=app)
-#         cfg = CronCmdCfg()
-#         win.set_child(cfg)
-#         win.present()
-#     app.connect("activate", on_activate)
-#     app.run()
