@@ -4,8 +4,7 @@ import gi
 gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk
 
-from CronControlWindows import CronTimePanel
-from CronControlWindows.CronTasks import CronCmdCfg, CronAlrmCfg, CronRM_Cfg, HelpCfg
+from CronControlWindows import CronTimePanel, CronTaskPanel
 
 
 class ApplyNewTask(Gtk.Box):
@@ -18,6 +17,7 @@ class ApplyNewTask(Gtk.Box):
         self.set_margin_end(12)
         self.parent = parent
         self.cron_time_panel = cron_time_panel
+        self.cron_task_panel = cron_tasks_panel
         # Label for confirmation
         self.confirm_label = Gtk.Label(label="Confirm your task settings:")
         self.confirm_label.set_halign(Gtk.Align.START)
@@ -34,6 +34,7 @@ class ApplyNewTask(Gtk.Box):
 
 
         self.CronTimePanel = CronTimePanel.CronTimePanel(self)
+        self.CronTaskPanel = CronTaskPanel.CronTaskPanel(self, self.CronTimePanel)
 
 
         feedback_label = Gtk.Label(label="Current Configuration:")
@@ -47,7 +48,11 @@ class ApplyNewTask(Gtk.Box):
         self.months_fb = Gtk.Label(label=str(self.CronTimePanel.get_selected_months()))
 
 
-
+                # Use Gtk.Entry widgets for feedback so they can be updated easily
+        self.cmd_type = Gtk.Label()
+        self.cmd_type.set_text("Selected: "+str(self.CronTaskPanel.get_selected_task()+" task"))#CronTaskPanel.get_task_value()+" task."))
+        self.cmd_str = Gtk.Label()
+        self.cmd_str.set_text(str(self.CronTaskPanel.update_task_cmd()))#str(self.CronTaskPanel.get_selected_task()))
 
         #added
         grid.attach(self.confirm_label, 0, 2, 1, 1)
@@ -57,15 +62,13 @@ class ApplyNewTask(Gtk.Box):
         grid.attach(self.time_fb, 0, 3, 1, 1)
         grid.attach(self.days_fb, 1, 3, 1, 1)
         grid.attach(self.months_fb, 2, 3, 1, 1)
+        
+        grid.attach(self.cmd_type, 0, 4, 1, 1)
+        grid.attach(self.cmd_str, 1, 4, 1, 1)
+
         grid.set_hexpand(True)
         grid.set_vexpand(True)
         self.append(grid)
-
-
-        # for btn in self.day_toggles:
-        #     btn.connect("toggled", lambda b: self.CronTimePanel.update_feedback())
-        #     self.update_feedback()
-
 
 
     def on_apply_clicked(self, button):
@@ -83,5 +86,11 @@ class ApplyNewTask(Gtk.Box):
         self.time_fb.set_text("cron will be called at: " + self.cron_time_panel.get_selected_time())
         self.days_fb.set_text(" these days: " + str(self.cron_time_panel.get_selected_days()))
         self.months_fb.set_text(" during " + str(self.cron_time_panel.get_selected_months()))
-
+        self.cron_task_panel.get_selected_task()
+        cmd_now=self.cron_task_panel.get_task_cmd()
+        self.cmd_type.set_text("Selected job: " + str(cmd_now[0] ) )
+        self.cmd_str.set_text(" job details: " + cmd_now[1])
+        cmd_str_value = str(self.cron_task_panel.get_task_cmd())
+        print(f"DEBUG: Setting cmd_str to: {cmd_str_value}")
+        self.cmd_str.set_text(cmd_str_value)
 

@@ -44,5 +44,6 @@ def update_feedback(self):
     self.time_fb.set_text("cron will be called at: "+self.get_selected_time())
     self.days_fb.set_text(" these days: "+str(self.get_selected_days()))
     self.months_fb.set_text(" during "+str(self.get_selected_months()))
+    self.cmd_type.set_text("Selected: "+str(self.CronTaskPanel.get_selected_task()+" task"))
     if self.apply_new_task is not None:
         self.apply_new_task.update_feedback()

@@ -8,14 +8,15 @@ import shutil
 class CronAlrmCfg(Gtk.Box):
 
 
-    def __init__(self, parent, cron_cmd=None):
+    def __init__(self, parent, cron_io, cron_cmd=None):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.set_margin_top(12)
         self.set_margin_bottom(12)
         self.set_margin_start(12)
         self.set_margin_end(12)
         self.parent = parent
-
+        self.cron_io = cron_io
+        self.cron_cmd = cron_cmd
 
         # Store feedback labels for later updates
         set_img="No image set"
@@ -93,6 +94,9 @@ class CronAlrmCfg(Gtk.Box):
     def on_img_selected(self, combo_box):
         self.set_img = combo_box.get_active_text()
         update_feedback_text = self.update_feedback_text()
+        # Notify parent to update feedback
+        if hasattr(self.parent, 'update_feedback'):
+            self.parent.update_feedback()
 
     def on_min_selected(self, spin_button):
         min_value = int(spin_button.get_value())
@@ -100,6 +104,10 @@ class CronAlrmCfg(Gtk.Box):
             spin_button.set_value(0)
         self.set_min= min_value
         update_feedback_text = self.update_feedback_text()
+        # Notify parent to update feedback
+        if hasattr(self.parent, 'update_feedback'):
+            self.parent.update_feedback()
+            self.set_cron_cmd()
 
     def on_sec_selected(self, spin_button):
         sec_value = int(spin_button.get_value())
@@ -107,6 +115,10 @@ class CronAlrmCfg(Gtk.Box):
             spin_button.set_value(0)
         self.set_sec = sec_value
         update_feedback_text = self.update_feedback_text()
+        # Notify parent to update feedback
+        if hasattr(self.parent, 'update_feedback'):
+            self.parent.update_feedback()
+            self.set_cron_cmd()
 
     def on_msg_selected(self, entry):
         msg_value = entry.get_text()
@@ -114,10 +126,16 @@ class CronAlrmCfg(Gtk.Box):
             entry.set_text("No message set")
         self.set_msg = msg_value
         update_feedback_text = self.update_feedback_text()
+        # Notify parent to update feedback
+        if hasattr(self.parent, 'update_feedback'):
+            self.parent.update_feedback()
+            self.set_cron_cmd()
 
 
     def update_feedback(self):
-        return f'--image "{self.get_selected_img_name()}" --message "{self.get_selected_msg()}" --displaytime {self.get_selected_timeframe()}'
+
+        self.cron_cmd[1]=f'CronOlarm.py --image "{self.get_selected_img_name()}" --message "{self.get_selected_msg()}" --displaytime {self.get_selected_timeframe()}'
+        return self.cron_cmd[1]#f'--image "{self.get_selected_img_name()}" --message "{self.get_selected_msg()}" --displaytime {self.get_selected_timeframe()}'
 
 
     def get_selected_img_name(self):

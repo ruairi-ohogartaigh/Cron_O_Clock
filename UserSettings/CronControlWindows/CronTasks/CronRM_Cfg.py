@@ -25,33 +25,41 @@ class CronRmCfg(Gtk.Box):
         self.set_margin_start(12)
         self.set_margin_end(12)
         self.parent = parent
-        # Image path entry
-        img_label = Gtk.Label(label="Command to be removed:")
-        img_label.set_halign(Gtk.Align.START)
-        self.img_entry = Gtk.Entry()
-        add_img_button = Gtk.Button(label="Remove")
+        self.cron_io = cron_io
+        self.cmd = ["remove", ""]
 
+        # Image path entry
+        rm_label = Gtk.Label(label="Command to be removed:")
+        rm_label.set_halign(Gtk.Align.START)
+        self.rm_entry= Gtk.Entry()
+        self.rm_entry.connect("changed", self.on_command_selected)
+
+
+        self.feedback_label = Gtk.Label()
+        self.feedback_label.set_text("enter command to be removed")
 
 
         # Add widgets to the box
-        self.append(img_label)
-        Img_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        Img_box.append(self.img_entry)
-        self.img_entry.connect("changed", self.on_command_selected)
-        # Img_box.append(add_img_button)
+        self.append(rm_label)
+        rm_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        rm_box.append(self.rm_entry)
+        self.rm_entry.connect("changed", self.on_command_selected)
+        # rm_box.append(add_rm_button)
+
+        self.append(rm_box)
+        self.append(self.feedback_label)
 
 
 
-        self.append(Img_box)
+    def on_command_selected(self, entry):
+
+        self.feedback_label.set_text("Remove command: "+self.rm_entry.get_text())
+        self.update_feedback()
+
+        if hasattr(self.parent, 'update_feedback'):
+            self.parent.update_feedback()
 
 
-    def on_command_selected(self, combo):
-        # Get the selected command
-        selected_command = combo.get_active_text()
-        if selected_command:
-            self.img_entry.set_text(selected_command)
-            # Here we would call the CronIO to remove the task from the crontab
-            # cron_io.remove_task(selected_command)
-            print(f"Command to be removed: {selected_command}")
-        else:
-            print("No command selected")
+    def update_feedback(self):
+        self.cmd = ["remove", self.rm_entry.get_text()] 
+        return f'remove command:  "{self.rm_entry.get_text()}" from the crontab'
